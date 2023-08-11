@@ -43,6 +43,11 @@
 #include "update_loader_download.h"
 #include "custom_cfg.h"
 
+#ifdef LITEEMF_ENABLED
+#include "api/bt/api_bt.h"
+#include "api/api_log.h"
+#endif
+
 #if (TCFG_BLE_DEMO_SELECT == DEF_BLE_DEMO_HOGP)
 /* #if RCSP_BTMATE_EN */
 /* #include "btstack/JL_rcsp_api.h" */
@@ -103,6 +108,7 @@ static uint8_t connection_update_waiting = 0; //请求已被接收，等待主�
 
 //参数表
 static const struct conn_update_param_t Peripheral_Preferred_Connection_Parameters[] = {
+	{6, 6,  0, 200},	//为了简单适配2.4g
     {6, 9,  100, 600}, //android
     {12, 12, 30, 400}, //ios
 };
@@ -260,6 +266,18 @@ static void connection_update_complete_success(u8 *packet, u8 connected_init)
     log_info("conn_interval = %d\n", conn_interval);
     log_info("conn_latency = %d\n", conn_latency);
     log_info("conn_timeout = %d\n", conn_timeout);
+
+    #if defined LITEEMF_ENABLED
+    api_bt_ctb_t* bt_ctbp;
+    if(m_trps & BT0_SUPPORT & BIT(BT_BLE_RF)){
+        bt_ctbp = api_bt_get_ctb(BT_BLE_RF);
+    }else{
+        bt_ctbp = api_bt_get_ctb(BT_BLE);
+    }
+    if(NULL != bt_ctbp){
+        bt_ctbp->inteval = conn_interval;
+    }
+    #endif
 
     if (connected_init) {
         if (conn_pair_info.pair_flag

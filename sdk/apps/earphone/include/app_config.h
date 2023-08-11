@@ -4,6 +4,9 @@
 /*
  * 系统打印总开关
  */
+#ifdef LITEEMF_ENABLED
+#include "hw_config.h"
+#endif
 
 #define LIB_DEBUG    1
 #define CONFIG_DEBUG_LIB(x)         (x & LIB_DEBUG)
@@ -22,13 +25,19 @@
 
 #ifdef CONFIG_APP_BT_ENABLE
 #define    TRANS_DATA_EN             0
+#define    BLE_HID_EN                0
 #define    RCSP_BTMATE_EN            0
 #define    RCSP_ADV_EN               1
 #define    AI_APP_PROTOCOL           0
 #define    LL_SYNC_EN                0
 #define    TUYA_DEMO_EN              0
 #else
+#ifndef    TRANS_DATA_EN
 #define    TRANS_DATA_EN             0
+#endif
+#ifndef    BLE_HID_EN
+#define    BLE_HID_EN                1
+#endif
 #define    RCSP_BTMATE_EN            0
 #define    RCSP_ADV_EN               0
 #define    AI_APP_PROTOCOL           0

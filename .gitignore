@@ -1,0 +1,72 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+# *.ld
+sdk.ld
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+tags
+filenametags
+cscope.out
+*.bc
+*.ufw
+*.fw
+
+
+sdk/cpu/**/tools/**/*.bin
+sdk/cpu/**/tools/*.txt
+sdk/cpu/**/tools/**/*.cfg
+sdk/cpu/**/tools/*.ini
+sdk/cpu/**/tools/*.lst
+sdk/cpu/**/tools/uboot.boot
+sdk/cpu/**/tools/uboot_no_ota.boot
+sdk/cpu/**/tools/download.bat
+sdk/cpu/**/*.used
+sdk/cpu/**/download
+sdk/objs

@@ -7,6 +7,8 @@
 #include "app_config.h"
 #include "lbuf.h"
 
+#if !defined LITEEMF_ENABLED && !API_USBD_BIT_ENABLE
+
 #ifdef CONFIG_ADAPTER_ENABLE
 #include "adapter_usb_hid.h"
 #endif//CONFIG_ADAPTER_ENABLE
@@ -352,3 +354,5 @@ u32 usb_release(const usb_dev usb_id)
 
     return 0;
 }
+
+#endif

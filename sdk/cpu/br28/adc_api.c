@@ -554,7 +554,7 @@ void _adc_init(u32 sys_lvd_en)
 
     request_irq(IRQ_GPADC_IDX, 0, adc_isr, 0);
 
-    usr_timer_add(NULL, adc_scan, 5, 0); //2ms
+    usr_timer_add(NULL, adc_scan, 2, 0); //2ms
 
     /* void btosc_fast_boot_test(void); */
     /* btosc_fast_boot_test(); */

@@ -50,6 +50,13 @@
 #define LOG_CLI_ENABLE
 #include "debug.h"
 
+#ifdef LITEEMF_ENABLED
+#include "usb/otg.h"
+#include "app/emf.h"
+#include "api/api_log.h"
+#endif
+
+
 void board_power_init(void);
 
 /*各个状态下默认的闪灯方式和提示音设置，如果USER_CFG中设置了USE_CONFIG_STATUS_SETTING为1，则会从配置文件读取对应的配置来填充改结构体*/
@@ -477,7 +484,7 @@ const struct soft_iic_config soft_iic_cfg[] = {
 #endif
 };
 
-
+#ifndef LITEEMF_ENABLED
 const struct hw_iic_config hw_iic_cfg[] = {
     //iic0 data
     {
@@ -495,6 +502,7 @@ const struct hw_iic_config hw_iic_cfg[] = {
         .io_pu = 1,                        //是否打开上拉电阻，如果外部电路没有焊接上拉电阻需要置1
     },
 };
+#endif
 
 #if TCFG_SD0_ENABLE
 SD0_PLATFORM_DATA_BEGIN(sd0_data)

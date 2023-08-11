@@ -23,7 +23,9 @@
 //*********************************************************************************//
 #define TCFG_UART0_ENABLE					ENABLE_THIS_MOUDLE                     //串口打印模块使能
 #define TCFG_UART0_RX_PORT					NO_CONFIG_PORT                         //串口接收脚配置（用于打印可以选择NO_CONFIG_PORT）
+#ifndef TCFG_UART0_TX_PORT
 #define TCFG_UART0_TX_PORT  				IO_PORTA_05                             //串口发送脚配置
+#endif
 #define TCFG_UART0_BAUDRATE  				1000000                                //串口波特率配置
 
 //*********************************************************************************//
@@ -83,8 +85,12 @@
 //                                 USB 配置                                        //
 //*********************************************************************************//
 #define TCFG_PC_ENABLE                      TCFG_APP_PC_EN //PC模块使能
+#ifndef TCFG_UDISK_ENABLE
 #define TCFG_UDISK_ENABLE					ENABLE_THIS_MOUDLE//U盘模块使能
+#endif
+#ifndef TCFG_OTG_USB_DEV_EN
 #define TCFG_OTG_USB_DEV_EN                 BIT(0)//USB0 = BIT(0)  USB1 = BIT(1)
+#endif
 
 #include "usb_std_class_def.h"
 #undef USB_DEVICE_CLASS_CONFIG
@@ -103,7 +109,9 @@
 //*********************************************************************************//
 //                                 iokey 配置                                      //
 //*********************************************************************************//
+#ifndef TCFG_IOKEY_ENABLE
 #define TCFG_IOKEY_ENABLE					ENABLE_THIS_MOUDLE //是否使能IO按键
+#endif
 
 #define TCFG_IOKEY_POWER_CONNECT_WAY		ONE_PORT_TO_LOW    //按键一端接低电平一端接IO
 
@@ -112,7 +120,9 @@
 //*********************************************************************************//
 //                                 adkey 配置                                      //
 //*********************************************************************************//
+#ifndef TCFG_ADKEY_ENABLE
 #define TCFG_ADKEY_ENABLE                   DISABLE_THIS_MOUDLE//是否使能AD按键
+#endif
 #define TCFG_ADKEY_PORT                     IO_PORT_DM         //AD按键端口(需要注意选择的IO口是否支持AD功能)
 /*AD通道选择，需要和AD按键的端口相对应:
     AD_CH_PA1    AD_CH_PA3    AD_CH_PA4    AD_CH_PA5
@@ -700,7 +710,9 @@ DAC硬件上的连接方式,可选的配置：
 //                                  充电参数配置                                   //
 //*********************************************************************************//
 //是否支持芯片内置充电
+#ifndef TCFG_CHARGE_ENABLE
 #define TCFG_CHARGE_ENABLE					ENABLE_THIS_MOUDLE
+#endif
 //是否支持开机充电
 #define TCFG_CHARGE_POWERON_ENABLE			DISABLE
 //是否支持拔出充电自动开机功能
@@ -708,9 +720,13 @@ DAC硬件上的连接方式,可选的配置：
 /*充电截止电压可选配置*/
 #define TCFG_CHARGE_FULL_V					CHARGE_FULL_V_4199
 /*充电截止电流可选配置*/
+#ifndef TCFG_CHARGE_FULL_MA
 #define TCFG_CHARGE_FULL_MA					CHARGE_FULL_mA_10
+#endif
 /*恒流充电电流可选配置*/
+#ifndef TCFG_CHARGE_MA
 #define TCFG_CHARGE_MA						CHARGE_mA_50
+#endif
 /*涓流充电电流配置*/
 #define TCFG_CHARGE_TRICKLE_MA              CHARGE_mA_10
 
@@ -737,9 +753,13 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 //                                  电源配置                                       //
 //*********************************************************************************//
+#ifndef TCFG_LOWPOWER_POWER_SEL
 #define TCFG_LOWPOWER_POWER_SEL				PWR_DCDC15        	//电源模式设置，可选DCDC和LDO
+#endif
 #define TCFG_LOWPOWER_BTOSC_DISABLE			0                   //低功耗模式下BTOSC是否保持
+#ifndef TCFG_LOWPOWER_LOWPOWER_SEL
 #define TCFG_LOWPOWER_LOWPOWER_SEL			1  				    //低功耗使能，蓝牙&&系统空闲可进入低功耗
+#endif
 #define TCFG_LOWPOWER_VDDIOM_LEVEL			VDDIOM_VOL_30V		//vddiom等级
 #define TCFG_LOWPOWER_OSC_TYPE              OSC_TYPE_LRC		//低功耗晶振类型，btosc/lrc
 #if (TCFG_AUDIO_ASR_DEVELOP && TCFG_CVP_DEVELOP_ENABLE)
@@ -940,7 +960,9 @@ DAC硬件上的连接方式,可选的配置：
 //                                  蓝牙配置                                       //
 //*********************************************************************************//
 #define TCFG_USER_TWS_ENABLE                      0   //tws功能使能
-#define TCFG_USER_BLE_ENABLE                      0   //BLE功能使能
+#ifndef TCFG_USER_BLE_ENABLE
+#define TCFG_USER_BLE_ENABLE                      1   //BLE功能使能
+#endif
 #define TCFG_BT_SUPPORT_AAC                       1   //AAC格式支持
 #define TCFG_BT_SUPPORT_LDAC                      0   //LDAC格式支持
 
@@ -950,13 +972,28 @@ DAC硬件上的连接方式,可选的配置：
 #define CONFIG_BT_RX_BUFF_SIZE  (22 * 1024)
 #endif
 
+#ifndef USER_SUPPORT_PROFILE_SPP
 #define USER_SUPPORT_PROFILE_SPP    1
+#endif
+#ifndef USER_SUPPORT_PROFILE_HFP
 #define USER_SUPPORT_PROFILE_HFP    1
+#endif
+#ifndef USER_SUPPORT_PROFILE_A2DP
 #define USER_SUPPORT_PROFILE_A2DP   1
+#endif
+#ifndef USER_SUPPORT_PROFILE_AVCTP
 #define USER_SUPPORT_PROFILE_AVCTP  1
+#endif
+#ifndef USER_SUPPORT_PROFILE_HID
 #define USER_SUPPORT_PROFILE_HID    1
+#endif
+#ifndef USER_SUPPORT_PROFILE_PNP
 #define USER_SUPPORT_PROFILE_PNP    1
+#endif
+#ifndef USER_SUPPORT_PROFILE_PBAP
 #define USER_SUPPORT_PROFILE_PBAP   0
+#endif
+
 
 #if TCFG_USER_TWS_ENABLE
 #define TCFG_BD_NUM						          1   //连接设备个数配置
@@ -1060,9 +1097,9 @@ DAC硬件上的连接方式,可选的配置：
 //                                  AI配置                                       //
 //*********************************************************************************//
 #if TCFG_USER_BLE_ENABLE
+#ifndef DUEROS_DMA_EN
 #define    DUEROS_DMA_EN             0
-#define    TRANS_DATA_EN             0
-#define    BLE_HID_EN                0
+#endif
 
 #if (DUEROS_DMA_EN)
 #define    BT_MIC_EN             1

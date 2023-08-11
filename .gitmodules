@@ -1,0 +1,4 @@
+[submodule "sdk/user/LiteEMF"]
+	path = sdk/user/LiteEMF
+	url = git@github_cesar.com:LiteEMF/LiteEMF.git
+	branch = main

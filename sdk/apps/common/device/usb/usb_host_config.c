@@ -13,6 +13,8 @@
 #define LOG_CLI_ENABLE
 #include "debug.h"
 
+#if !defined LITEEMF_ENABLED && !API_USBD_BIT_ENABLE
+
 #define     SET_INTERRUPT   ___interrupt
 
 #if TCFG_UDISK_ENABLE || TCFG_ADB_ENABLE ||TCFG_AOA_ENABLE || TCFG_HID_HOST_ENABLE || TCFG_HOST_AUDIO_ENABLE
@@ -191,4 +193,5 @@ void usb_host_free(usb_dev usb_id)
     }
     OS_EXIT_CRITICAL();
 }
+#endif
 #endif

@@ -58,7 +58,10 @@
 #include "vol_sync.h"
 #include "bt_background.h"
 #include "default_event_handler.h"
-
+#ifdef LITEEMF_ENABLED
+#include "api/bt/api_bt.h"
+#include "api/api_log.h"
+#endif
 #ifdef CONFIG_BOARD_AISPEECH_VAD_ASR
 extern int ais_platform_asr_open(void);
 extern void ais_platform_asr_close(void);
@@ -1358,6 +1361,13 @@ static int bt_connction_status_event_handler(struct bt_event *bt)
 #if BLE_HID_EN && (!TCFG_USER_TWS_ENABLE)
             ble_module_enable(1);
 #endif
+            #ifdef LITEEMF_ENABLED
+            for(uint8_t id=0; id<BT_MAX; id++){
+                if(BT0_SUPPORT & BIT(id)){      //全部模式
+                    api_bt_event(BT_ID0, (bt_t)id, BT_EVT_INIT, NULL);
+                }
+            }
+            #endif
         }
 
 #endif
@@ -2282,6 +2292,58 @@ static int bt_hci_event_handler(struct bt_event *bt)
     return 0;
 }
 
+#ifdef LITEEMF_ENABLED
+#include "ble_user.h"
+void ble_status_callback(ble_state_e status, u8 reason)
+{
+    bt_t bt;
+    logd("----%s reason %x %x", __FUNCTION__, status, reason);
+
+    if(m_trps & BT0_SUPPORT & BIT(BT_BLE_RF)){
+        bt = BT_BLE_RF;
+    }else{
+        bt = BT_BLE;
+    }
+
+    switch (status) {
+    #if CONFIG_BT_GATT_SERVER_NUM
+    case BLE_ST_IDLE:
+        api_bt_event(BT_ID0,bt,BT_EVT_IDLE,NULL);
+        break;
+    case BLE_ST_ADV:
+        api_bt_event(BT_ID0,bt,BT_EVT_ADV,NULL);
+        break;
+    case BLE_ST_CONNECT:
+        api_bt_event(BT_ID0,bt,BT_EVT_CONNECTED,NULL);
+        //选择物理层,这里不设置详见SET_SELECT_PHY_CFG
+        // if(m_trps & BT0_SUPPORT & BIT(BT_BLE_RF)){
+        //     ble_comm_set_connection_data_phy(reason, CONN_SET_1M_PHY, CONN_SET_1M_PHY, CONN_SET_PHY_OPTIONS_NONE);//向对端发起phy通道更改
+        // }
+
+        #if (20 != API_BT_LL_MTU)
+        ble_comm_set_connection_data_length(ble_hid_is_connected(), API_BT_LL_MTU+7, 2120);
+        #endif
+
+        break;
+    case BLE_ST_SEND_DISCONN:
+        break;
+    case BLE_ST_DISCONN:
+        api_bt_event(BT_ID0,bt,BT_EVT_DISCONNECTED,NULL);
+        break;
+    case BLE_ST_NOTIFY_IDICATE:
+        api_bt_event(BT_ID0,bt,BT_EVT_READY,NULL);;
+        break;
+    case BLE_PRIV_PAIR_ENCRYPTION_CHANGE:               //ble 2.4g切换保存当前配对信息
+        logd("BLE_PRIV_PAIR_ENCRYPTION_CHANGE\n");
+        // pair_info_address_update(bt, ble_cur_connect_addrinfo());   //TODO
+        break;
+    #endif
+    default:
+        break;
+    }
+}
+#endif
+
 
 //恢复前台运行
 static void earphone_run_at_foreground()
@@ -2318,7 +2380,6 @@ static int event_handler(struct application *app, struct sys_event *event)
 #endif
         app_earphone_key_event_handler(event);
         break;
-
     case SYS_BT_EVENT:
         /*
          * 蓝牙事件处理
@@ -2327,6 +2388,10 @@ static int event_handler(struct application *app, struct sys_event *event)
             bt_connction_status_event_handler(&event->u.bt);
         } else if ((u32)event->arg == SYS_BT_EVENT_TYPE_HCI_STATUS) {
             bt_hci_event_handler(&event->u.bt);
+        #ifdef LITEEMF_ENABLED
+        } else if ((u32)event->arg == SYS_BT_EVENT_BLE_STATUS) {
+            ble_status_callback(event->u.bt.event, event->u.bt.value);
+        #endif
         }
 #if TCFG_ADSP_UART_ENABLE
         else if (!strcmp(event->arg, "UART")) {
@@ -2603,6 +2668,12 @@ static int state_machine(struct application *app, enum app_state state, struct i
             bt_sniff_feature_init();
             sys_auto_sniff_controle(MY_SNIFF_EN, NULL);
             app_var.dev_volume = -1;
+
+            #ifdef LITEEMF_ENABLED
+            extern void liteemf_app_start(void);
+            liteemf_app_start();
+            #endif
+            
             break;
         case ACTION_A2DP_START:
 #if (BT_SUPPORT_MUSIC_VOL_SYNC && CONFIG_BT_BACKGROUND_ENABLE)

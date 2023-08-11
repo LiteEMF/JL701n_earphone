@@ -20,6 +20,9 @@
 
 #include "debug.h"
 
+#if !defined LITEEMF_ENABLED && !API_USBD_BIT_ENABLE
+
+
 #if TCFG_USB_SLAVE_ENABLE
 
 static void usb_device_init(const usb_dev usb_id)
@@ -256,3 +259,6 @@ u32 usb_otg_sof_check_init(const usb_dev id)
     usb_sof_clr_pnd(id);
     return 1;
 }
+
+#endif
+

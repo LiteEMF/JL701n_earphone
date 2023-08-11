@@ -1,0 +1,16 @@
+# 将子目录的源文件添加到目标中
+file(GLOB SOURCE "*.cpp" "*.c")
+set(SUB_SRC ${SUB_SRC} ${SOURCE} CACHE STRING "fix SUB_SRC" FORCE)
+
+# 获取当前目录中的全部子目录
+file(GLOB SUBDIRECTORIES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
+# 遍历并打印子目录路径
+foreach(SUBDIRECTORY ${SUBDIRECTORIES})
+  if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIRECTORY})
+  	# message("add_subdirectory=${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIRECTORY}")
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIRECTORY}/CMakeLists.txt")
+		include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIRECTORY})
+		add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIRECTORY})
+	endif()
+  endif()
+endforeach()
